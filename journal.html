@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>JAI Journal</title>
+    <style>
+        *{margin:0;padding:0;box-sizing:border-box;}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;transition:background 0.3s;padding:20px;}
+        .container{max-width:800px;margin:0 auto;}
+        
+        /* Auth Modal */
+        .auth-overlay{
+            position:fixed;
+            top:0;
+            left:0;
+            width:100%;
+            height:100%;
+            background:rgba(0,0,0,0.8);
+            backdrop-filter:blur(8px);
+            display:flex;
+            justify-content:center;
+            align-items:center;
+            z-index:1000;
+        }
+        .auth-card{
+            background:rgba(15,25,45,0.95);
+            backdrop-filter:blur(12px);
+            border-radius:30px;
+            padding:40px;
+            width:90%;
+            max-width:380px;
+            text-align:center;
+            border:1px solid rgba(0,212,255,0.3);
+        }
+        .auth-card h2{color:#00d4ff;margin-bottom:20px;}
+        .auth-card input{
+            width:100%;
+            padding:12px;
+            margin:10px 0;
+            background:rgba(0,0,0,0.4);
+            border:1px solid rgba(0,212,255,0.3);
+            border-radius:40px;
+            color:white;
+            outline:none;
+        }
+        .auth-btn{
+            background:linear-gradient(135deg,#00d4ff,#00aa88);
+            border:none;
+            border-radius:40px;
+            padding:12px;
+            width:100%;
+            font-weight:bold;
+            cursor:pointer;
+            margin-top:10px;
+        }
+        .switch-auth{color:#94a3b8;margin-top:15px;font-size:0.85rem;}
+        .switch-auth a{color:#00d4ff;cursor:pointer;}
+        .error-msg{color:#ff8888;font-size:0.8rem;margin-top:10px;display:none;}
+        .user-bar{
+            display:flex;
+            justify-content:flex-end;
+            margin-bottom:15px;
+        }
+        .user-btn{
+            background:rgba(0,212,255,0.2);
+            border:1px solid rgba(0,212,255,0.3);
+            padding:6px 16px;
+            border-radius:30px;
+            font-size:0.8rem;
+            color:#00d4ff;
+            cursor:pointer;
+        }
+        
+        /* Modal-style selectors at top */
+        .top-modals{display:flex;gap:15px;margin-bottom:25px;flex-wrap:wrap;justify-content:center;}
+        .modal-card{background:rgba(10,20,35,0.6);backdrop-filter:blur(12px);border-radius:24px;padding:12px 18px;flex:1;min-width:180px;border:1px solid rgba(0,212,255,0.3);}
+        .modal-title{color:#00d4ff;font-size:0.7rem;text-transform:uppercase;margin-bottom:10px;}
+        .bg-options{display:flex;gap:10px;flex-wrap:wrap;}
+        .bg-option{width:45px;height:45px;border-radius:12px;cursor:pointer;border:2px solid rgba(255,255,255,0.3);background-size:cover;transition:0.2s;}
+        .bg-option.selected{border-color:#00d4ff;transform:scale(1.05);}
+        .bg-default{background:linear-gradient(135deg,#0a0f1e,#0a1a2a);}
+        .bg-ocean{background:url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200') center/cover;}
+        .bg-forest{background:url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200') center/cover;}
+        .bg-mountain{background:url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200') center/cover;}
+        .bg-sunset{background:url('https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=200') center/cover;}
+        .bg-stars{background:url('https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=200') center/cover;}
+        .bg-cherry{background:url('https://images.unsplash.com/photo-1522383225653-ed111181a951?w=200') center/cover;}
+        .bg-lake{background:url('https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=200') center/cover;}
+        
+        .mood-options{display:flex;gap:8px;flex-wrap:wrap;}
+        .mood{font-size:1.5rem;cursor:pointer;padding:5px;opacity:0.6;background:rgba(0,0,0,0.3);border-radius:50%;width:42px;height:42px;display:flex;align-items:center;justify-content:center;}
+        .mood.selected{opacity:1;background:rgba(0,212,255,0.4);transform:scale(1.05);}
+        .upload-label{background:rgba(0,212,255,0.2);border:1px solid rgba(0,212,255,0.3);padding:6px 12px;border-radius:20px;font-size:0.7rem;color:#00d4ff;cursor:pointer;display:inline-block;margin-top:8px;}
+        
+        .journal-input{width:100%;min-height:250px;padding:20px;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);border:1px solid rgba(0,212,255,0.3);border-radius:24px;color:white;font-size:1rem;font-family:inherit;line-height:1.6;resize:vertical;outline:none;}
+        .journal-input:focus{border-color:#00d4ff;}
+        .save-btn{background:linear-gradient(135deg,#00d4ff,#00aa88);border:none;border-radius:40px;padding:12px 28px;font-weight:bold;cursor:pointer;margin-top:15px;}
+        .search-section{background:rgba(10,20,35,0.5);backdrop-filter:blur(10px);border-radius:24px;padding:12px 16px;margin-bottom:20px;display:flex;gap:10px;flex-wrap:wrap;}
+        .search-section input{flex:1;padding:10px;background:rgba(0,0,0,0.4);border:1px solid rgba(0,212,255,0.3);border-radius:40px;color:white;}
+        .search-btn,.clear-btn{background:rgba(0,212,255,0.2);border:1px solid rgba(0,212,255,0.3);padding:8px 20px;border-radius:40px;cursor:pointer;color:#00d4ff;}
+        .entries-section{background:rgba(10,20,35,0.5);backdrop-filter:blur(10px);border-radius:24px;padding:20px;}
+        .entries-section h3{color:#00d4ff;margin-bottom:15px;}
+        .journal-entry{background:rgba(0,0,0,0.3);border-radius:16px;padding:15px;margin-bottom:12px;border-left:3px solid #00d4ff;}
+        .journal-header{display:flex;justify-content:space-between;margin-bottom:10px;}
+        .journal-date{font-size:0.7rem;color:#00d4ff;}
+        .journal-mood{font-size:1.2rem;}
+        .journal-content{color:#e2e8f0;margin-bottom:10px;}
+        .journal-actions button{background:none;border:none;color:#94a3b8;cursor:pointer;font-size:0.75rem;margin-right:12px;}
+        .empty-msg{text-align:center;color:#64748b;padding:30px;}
+        .footer{text-align:center;font-size:0.7rem;color:#4a5568;margin-top:20px;}
+        .hidden{display:none;}
+        @media(max-width:600px){.modal-card{min-width:100%;}.journal-input{min-height:200px;}}
+    </style>
+</head>
+<body id="journalBody">
+    <div id="appContainer" class="container hidden">
+        <div class="user-bar"><button class="user-btn" onclick="logout()">👤 <span id="usernameDisplay"></span> | Logout</button></div>
+        
+        <div class="top-modals">
+            <div class="modal-card">
+                <div class="modal-title">🎨 BACKGROUND</div>
+                <div class="bg-options">
+                    <div class="bg-option bg-default" data-bg="default"></div>
+                    <div class="bg-option bg-ocean" data-bg="ocean"></div>
+                    <div class="bg-option bg-forest" data-bg="forest"></div>
+                    <div class="bg-option bg-mountain" data-bg="mountain"></div>
+                    <div class="bg-option bg-sunset" data-bg="sunset"></div>
+                    <div class="bg-option bg-stars" data-bg="stars"></div>
+                    <div class="bg-option bg-cherry" data-bg="cherry"></div>
+                    <div class="bg-option bg-lake" data-bg="lake"></div>
+                </div>
+                <label class="upload-label">📸 UPLOAD<input type="file" id="bgUpload" accept="image/*" style="display:none;"></label>
+                <span id="fileName" style="font-size:0.65rem;color:#94a3b8;"></span>
+            </div>
+            <div class="modal-card">
+                <div class="modal-title">😊 MOOD</div>
+                <div class="mood-options" id="moodSelector">
+                    <span class="mood" data-mood="😊">😊</span><span class="mood" data-mood="😄">😄</span>
+                    <span class="mood" data-mood="😢">😢</span><span class="mood" data-mood="😡">😡</span>
+                    <span class="mood" data-mood="😎">😎</span><span class="mood" data-mood="😌">😌</span>
+                    <span class="mood" data-mood="🎉">🎉</span><span class="mood" data-mood="🌙">🌙</span>
+                    <span class="mood" data-mood="❤️">❤️</span><span class="mood" data-mood="💪">💪</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="write-section">
+            <textarea class="journal-input" id="journalText" placeholder="What's on your mind today? Write freely..."></textarea>
+            <button class="save-btn" onclick="saveEntry()">💾 Save Entry</button>
+        </div>
+
+        <div class="search-section">
+            <input type="date" id="searchDate">
+            <button class="search-btn" onclick="searchEntries()">🔍 Search</button>
+            <button class="clear-btn" onclick="clearSearch()">Clear</button>
+        </div>
+
+        <div class="entries-section">
+            <h3>📖 Recent Entries</h3>
+            <div id="entriesContainer"></div>
+        </div>
+        <div class="footer">Private — stored in your browser</div>
+    </div>
+
+    <div id="authOverlay" class="auth-overlay">
+        <div class="auth-card">
+            <h2 id="authTitle">Login</h2>
+            <input type="text" id="authUsername" placeholder="Username">
+            <input type="password" id="authPassword" placeholder="Password">
+            <div id="authError" class="error-msg"></div>
+            <button class="auth-btn" onclick="handleAuth()" id="authBtn">Login</button>
+            <div class="switch-auth"><span id="switchText">Don't have an account? </span><a onclick="toggleAuthMode()">Sign up</a></div>
+        </div>
+    </div>
+
+    <script>
+        let authMode = 'login';
+        let currentUser = null;
+        
+        function getUsers(){return JSON.parse(localStorage.getItem('jai_users')||'{}');}
+        function saveUsers(users){localStorage.setItem('jai_users',JSON.stringify(users));}
+        
+        function toggleAuthMode(){
+            authMode = authMode === 'login' ? 'signup' : 'login';
+            document.getElementById('authTitle').innerText = authMode === 'login' ? 'Login' : 'Sign Up';
+            document.getElementById('authBtn').innerText = authMode === 'login' ? 'Login' : 'Create Account';
+            document.getElementById('switchText').innerHTML = authMode === 'login' ? "Don't have an account? " : "Already have an account? ";
+            document.getElementById('authError').style.display = 'none';
+        }
+        
+        function handleAuth(){
+            const username = document.getElementById('authUsername').value.trim();
+            const password = document.getElementById('authPassword').value.trim();
+            const errorDiv = document.getElementById('authError');
+            if(!username || !password){errorDiv.innerText='❌ Please fill all fields';errorDiv.style.display='block';return;}
+            const users = getUsers();
+            if(authMode === 'login'){
+                if(users[username] && users[username].password === password){
+                    currentUser = username;
+                    localStorage.setItem('jai_current_user',username);
+                    localStorage.setItem('jai_name',users[username].name||username);
+                    document.getElementById('authOverlay').style.display='none';
+                    document.getElementById('appContainer').classList.remove('hidden');
+                    document.getElementById('usernameDisplay').innerText = username;
+                    loadUserData();
+                }else{
+                    errorDiv.innerText='❌ Invalid username or password';errorDiv.style.display='block';
+                }
+            }else{
+                if(users[username]){errorDiv.innerText='❌ Username already exists';errorDiv.style.display='block';return;}
+                users[username]={password:password,name:username,created:new Date().toISOString(),entries:[]};
+                saveUsers(users);
+                currentUser=username;
+                localStorage.setItem('jai_current_user',username);
+                localStorage.setItem('jai_name',username);
+                document.getElementById('authOverlay').style.display='none';
+                document.getElementById('appContainer').classList.remove('hidden');
+                document.getElementById('usernameDisplay').innerText = username;
+                loadUserData();
+            }
+        }
+        
+        function logout(){
+            localStorage.removeItem('jai_current_user');
+            localStorage.removeItem('jai_name');
+            currentUser=null;
+            document.getElementById('appContainer').classList.add('hidden');
+            document.getElementById('authOverlay').style.display='flex';
+            document.getElementById('authUsername').value='';
+            document.getElementById('authPassword').value='';
+            authMode='login';
+            document.getElementById('authTitle').innerText='Login';
+            document.getElementById('authBtn').innerText='Login';
+            document.getElementById('switchText').innerHTML="Don't have an account? ";
+        }
+        
+        function loadUserData(){
+            const users = getUsers();
+            const userData = users[currentUser] || {entries:[]};
+            window.entries = userData.entries || [];
+            renderEntries();
+            loadUserBackground();
+        }
+        
+        function saveUserData(){
+            const users = getUsers();
+            if(users[currentUser]){users[currentUser].entries = window.entries;}
+            saveUsers(users);
+        }
+        
+        function saveEntries(){saveUserData();renderEntries();}
+        
+        // Background
+        const bgMap={default:'linear-gradient(135deg,#0a0f1e,#0a1a2a)',ocean:'url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600") center/cover fixed',forest:'url("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600") center/cover fixed',mountain:'url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600") center/cover fixed',sunset:'url("https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=1600") center/cover fixed',stars:'url("https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=1600") center/cover fixed',cherry:'url("https://images.unsplash.com/photo-1522383225653-ed111181a951?w=1600") center/cover fixed',lake:'url("https://images.unsplash.com/photo-1501785888041-af3ef285b470?w=1600") center/cover fixed'};
+        let selectedBg=localStorage.getItem('journal_bg')||'default',customBg=null;
+        function updateBg(){document.getElementById('journalBody').style.background=customBg?`url("${customBg}") center/cover fixed`:bgMap[selectedBg];document.querySelectorAll('.bg-option').forEach(o=>{o.classList.remove('selected');if(o.dataset.bg===selectedBg&&!customBg)o.classList.add('selected');});}
+        document.querySelectorAll('.bg-option').forEach(o=>{o.onclick=()=>{selectedBg=o.dataset.bg;customBg=null;document.getElementById('fileName').innerText='';updateBg();localStorage.setItem('journal_bg',selectedBg);localStorage.removeItem('journal_custom');};});
+        document.getElementById('bgUpload').onchange=e=>{let f=e.target.files[0];if(f&&f.type.startsWith('image/')){let r=new FileReader();r.onload=ev=>{customBg=ev.target.result;document.getElementById('fileName').innerText=f.name;updateBg();localStorage.setItem('journal_custom',customBg);localStorage.removeItem('journal_bg');};r.readAsDataURL(f);}};
+        function loadUserBackground(){let savedCustom=localStorage.getItem('journal_custom');if(savedCustom){customBg=savedCustom;updateBg();}else{let saved=localStorage.getItem('journal_bg');if(saved&&bgMap[saved])selectedBg=saved;updateBg();}}
+        
+        // Journal
+        let selectedMood='😊';
+        document.querySelectorAll('.mood').forEach(m=>{m.onclick=()=>{document.querySelectorAll('.mood').forEach(x=>x.classList.remove('selected'));m.classList.add('selected');selectedMood=m.dataset.mood;};});
+        document.querySelector('.mood').classList.add('selected');
+        
+        function saveEntry(){
+            let c=document.getElementById('journalText').value.trim();
+            if(!c){alert('Write something');return;}
+            window.entries.unshift({id:Date.now(),date:new Date().toISOString(),content:c,mood:selectedMood});
+            saveEntries();
+            document.getElementById('journalText').value='';
+            alert('Saved!');
+        }
+        
+        function renderEntries(filterDate=null){
+            let c=document.getElementById('entriesContainer');
+            let f=[...window.entries];
+            if(filterDate)f=f.filter(e=>e.date.split('T')[0]===filterDate);
+            f.sort((a,b)=>new Date(b.date)-new Date(a.date));
+            if(!f.length){c.innerHTML='<div class="empty-msg">No entries yet</div>';return;}
+            c.innerHTML=f.map(e=>`<div class="journal-entry"><div class="journal-header"><span class="journal-date">${new Date(e.date).toLocaleString()}</span><span class="journal-mood">${e.mood||'📝'}</span></div><div class="journal-content">${e.content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>')}</div><div class="journal-actions"><button onclick="editEntry(${e.id})">✏️ Edit</button><button onclick="deleteEntry(${e.id})">🗑️ Delete</button></div></div>`).join('');
+        }
+        
+        window.editEntry=id=>{let e=window.entries.find(x=>x.id===id);if(e){let n=prompt('Edit:',e.content);if(n&&n.trim()){e.content=n.trim();saveEntries();}}};
+        window.deleteEntry=id=>{if(confirm('Delete?')){window.entries=window.entries.filter(x=>x.id!==id);saveEntries();}};
+        function searchEntries(){let d=document.getElementById('searchDate').value;d?renderEntries(d):renderEntries();}
+        function clearSearch(){document.getElementById('searchDate').value='';renderEntries();}
+        
+        // Check existing login
+        const savedUser = localStorage.getItem('jai_current_user');
+        if(savedUser && getUsers()[savedUser]){
+            currentUser = savedUser;
+            document.getElementById('authOverlay').style.display='none';
+            document.getElementById('appContainer').classList.remove('hidden');
+            document.getElementById('usernameDisplay').innerText = savedUser;
+            loadUserData();
+        }else{
+            document.getElementById('authOverlay').style.display='flex';
+        }
+    </script>
+</body>
+</html>
