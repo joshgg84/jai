@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Sign Up | JAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0a1a2a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .signup-container {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .signup-card {
+            background: rgba(15, 25, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            text-align: center;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00d4ff, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 8px;
+        }
+
+        .logo p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-bottom: 30px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 40px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .signup-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00d4ff, #00aa88);
+            border: none;
+            border-radius: 40px;
+            padding: 14px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #0a0f1e;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .signup-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .login-link {
+            margin-top: 20px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .login-link a {
+            color: #00d4ff;
+            text-decoration: none;
+        }
+
+        .login-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-msg {
+            background: rgba(255, 80, 80, 0.2);
+            border: 1px solid rgba(255, 80, 80, 0.5);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            color: #ff8888;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-msg {
+            background: rgba(0, 255, 100, 0.2);
+            border: 1px solid rgba(0, 255, 100, 0.5);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            color: #88ff88;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #4a5568;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <div class="signup-card">
+            <div class="logo">
+                <h1>🗣️ JAI</h1>
+                <p>Create your account</p>
+            </div>
+
+            <div id="errorMsg" class="error-msg"></div>
+            <div id="successMsg" class="success-msg"></div>
+
+            <div class="input-group">
+                <label>👤 Username</label>
+                <input type="text" id="username" placeholder="Choose a username" autofocus>
+            </div>
+
+            <div class="input-group">
+                <label>🔑 Password</label>
+                <input type="password" id="password" placeholder="Create a password">
+            </div>
+
+            <div class="input-group">
+                <label>✓ Confirm Password</label>
+                <input type="password" id="confirmPassword" placeholder="Confirm your password">
+            </div>
+
+            <button class="signup-btn" onclick="signup()">Create Account</button>
+
+            <div class="login-link">
+                Already have an account? <a href="login.html">Login</a>
+            </div>
+        </div>
+        <div class="footer">
+            Created by Joshua Giwa | Yukuben, Nigeria
+        </div>
+    </div>
+
+    <script>
+        // Check if already logged in
+        if (localStorage.getItem('jai_current_user')) {
+            window.location.href = 'index.html';
+        }
+
+        function getUsers() {
+            const users = localStorage.getItem('jai_users');
+            return users ? JSON.parse(users) : {};
+        }
+
+        function saveUsers(users) {
+            localStorage.setItem('jai_users', JSON.stringify(users));
+        }
+
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        function showSuccess(msg) {
+            const successDiv = document.getElementById('successMsg');
+            successDiv.textContent = msg;
+            successDiv.style.display = 'block';
+        }
+
+        function signup() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const confirmPassword = document.getElementById('confirmPassword').value.trim();
+
+            if (!username || !password || !confirmPassword) {
+                showError('❌ Please fill in all fields');
+                return;
+            }
+
+            if (username.length < 3) {
+                showError('❌ Username must be at least 3 characters');
+                return;
+            }
+
+            if (password.length < 4) {
+                showError('❌ Password must be at least 4 characters');
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('❌ Passwords do not match');
+                return;
+            }
+
+            const users = getUsers();
+
+            if (users[username]) {
+                showError('❌ Username already exists. Please login.');
+                return;
+            }
+
+            // Create new user
+            users[username] = {
+                password: password,
+                name: username,
+                created: new Date().toISOString()
+            };
+            saveUsers(users);
+
+            showSuccess('✅ Account created successfully! Redirecting to login...');
+            
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 1500);
+        }
+
+        document.getElementById('confirmPassword').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') signup();
+        });
+    </script>
+</body>
+</html>
