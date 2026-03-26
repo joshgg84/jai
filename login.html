@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Login | JAI</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0f1e 0%, #0a1a2a 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .login-container {
+            max-width: 400px;
+            width: 100%;
+        }
+
+        .login-card {
+            background: rgba(15, 25, 45, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 30px;
+            padding: 40px;
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 30px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #00d4ff, #00ffaa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .logo p {
+            color: #94a3b8;
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 0.85rem;
+            margin-bottom: 8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(0, 212, 255, 0.3);
+            border-radius: 40px;
+            color: white;
+            font-size: 1rem;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: #00d4ff;
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #00d4ff, #00aa88);
+            border: none;
+            border-radius: 40px;
+            padding: 14px;
+            font-weight: bold;
+            font-size: 1rem;
+            color: #0a0f1e;
+            cursor: pointer;
+            transition: transform 0.2s;
+            margin-top: 10px;
+        }
+
+        .login-btn:hover {
+            transform: scale(1.02);
+        }
+
+        .signup-link {
+            margin-top: 20px;
+            color: #94a3b8;
+            font-size: 0.85rem;
+        }
+
+        .signup-link a {
+            color: #00d4ff;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
+        }
+
+        .error-msg {
+            background: rgba(255, 80, 80, 0.2);
+            border: 1px solid rgba(255, 80, 80, 0.5);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            color: #ff8888;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .success-msg {
+            background: rgba(0, 255, 100, 0.2);
+            border: 1px solid rgba(0, 255, 100, 0.5);
+            border-radius: 12px;
+            padding: 10px;
+            text-align: center;
+            color: #88ff88;
+            font-size: 0.85rem;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .footer {
+            margin-top: 20px;
+            font-size: 0.7rem;
+            color: #4a5568;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="logo">
+                <h1>🗣️ JAI</h1>
+                <p>Joshua's Artificial Intelligence</p>
+            </div>
+
+            <div id="errorMsg" class="error-msg"></div>
+            <div id="successMsg" class="success-msg"></div>
+
+            <div class="input-group">
+                <label>👤 Username</label>
+                <input type="text" id="username" placeholder="Enter your username" autofocus>
+            </div>
+
+            <div class="input-group">
+                <label>🔑 Password</label>
+                <input type="password" id="password" placeholder="Enter your password">
+            </div>
+
+            <button class="login-btn" id="loginBtn">Login</button>
+
+            <div class="signup-link">
+                Don't have an account? <a id="signupLink">Sign up</a>
+            </div>
+        </div>
+        <div class="footer">
+            Created by Joshua Giwa | Yukuben, Nigeria
+        </div>
+    </div>
+
+    <script>
+        // Check if user is already logged in
+        const currentUser = localStorage.getItem('jai_current_user');
+        if (currentUser) {
+            window.location.href = 'https://jai2.onrender.com'; // Change to your JAI2 chat URL
+        }
+
+        // Get users from localStorage
+        function getUsers() {
+            const users = localStorage.getItem('jai_users');
+            return users ? JSON.parse(users) : {};
+        }
+
+        // Save users
+        function saveUsers(users) {
+            localStorage.setItem('jai_users', JSON.stringify(users));
+        }
+
+        // Show error message
+        function showError(msg) {
+            const errorDiv = document.getElementById('errorMsg');
+            errorDiv.textContent = msg;
+            errorDiv.style.display = 'block';
+            setTimeout(() => {
+                errorDiv.style.display = 'none';
+            }, 3000);
+        }
+
+        // Show success message
+        function showSuccess(msg) {
+            const successDiv = document.getElementById('successMsg');
+            successDiv.textContent = msg;
+            successDiv.style.display = 'block';
+            setTimeout(() => {
+                successDiv.style.display = 'none';
+            }, 2000);
+        }
+
+        // Login function
+        function login() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                showError('❌ Please enter username and password');
+                return;
+            }
+
+            const users = getUsers();
+
+            if (users[username] && users[username].password === password) {
+                // Login successful
+                localStorage.setItem('jai_current_user', username);
+                localStorage.setItem('jai_name', users[username].name || username);
+                showSuccess('✅ Login successful! Redirecting...');
+                setTimeout(() => {
+                    window.location.href = 'https://jai2.onrender.com'; // Change to your JAI2 chat URL
+                }, 1000);
+            } else {
+                showError('❌ Invalid username or password');
+            }
+        }
+
+        // Signup function
+        function signup() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!username || !password) {
+                showError('❌ Please enter username and password to sign up');
+                return;
+            }
+
+            if (username.length < 3) {
+                showError('❌ Username must be at least 3 characters');
+                return;
+            }
+
+            if (password.length < 4) {
+                showError('❌ Password must be at least 4 characters');
+                return;
+            }
+
+            const users = getUsers();
+
+            if (users[username]) {
+                showError('❌ Username already exists. Please login.');
+                return;
+            }
+
+            // Create new user
+            users[username] = {
+                password: password,
+                name: username,
+                created: new Date().toISOString()
+            };
+            saveUsers(users);
+
+            showSuccess('✅ Account created! Logging in...');
+            
+            // Auto login
+            localStorage.setItem('jai_current_user', username);
+            localStorage.setItem('jai_name', username);
+            
+            setTimeout(() => {
+                window.location.href = 'https://jai2.onrender.com'; // Change to your JAI2 chat URL
+            }, 1000);
+        }
+
+        // Event listeners
+        document.getElementById('loginBtn').addEventListener('click', login);
+        document.getElementById('signupLink').addEventListener('click', signup);
+        
+        // Enter key to login/signup
+        document.getElementById('password').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') login();
+        });
+        document.getElementById('username').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') document.getElementById('password').focus();
+        });
+    </script>
+</body>
+</html>
