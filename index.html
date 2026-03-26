@@ -36,6 +36,7 @@
         .messages::-webkit-scrollbar{width:6px;}
         .messages::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
         .messages::-webkit-scrollbar-thumb{background:#00d4ff;}
+        .waking-msg{background:rgba(255,200,100,0.2);border:1px solid rgba(255,200,100,0.5);}
         @media(max-width:600px){.bubble{max-width:85%;font-size:0.85rem;}.avatar{width:32px;height:32px;}}
     </style>
 </head>
@@ -87,6 +88,14 @@
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
         let currentAudio = null;
+        let isWakingUp = false;
+        let wakeUpMessageId = null;
+
+        // Keep-alive ping every 10 minutes
+        setInterval(() => {
+            fetch(`${API_URL}/health`).catch(e => console.log('Keep-alive ping failed'));
+            console.log('Keep-alive ping sent');
+        }, 10 * 60 * 1000);
 
         async function speakText(text) {
             if (!text) return;
@@ -119,9 +128,10 @@
             }
         }
 
-        function addMessage(msg, isUser = false) {
+        function addMessage(msg, isUser = false, isWakeMsg = false) {
             const div = document.createElement('div');
             div.className = `message ${isUser ? 'user' : 'ai'}`;
+            if (isWakeMsg) div.classList.add('waking-msg');
             const avatar = document.createElement('div');
             avatar.className = 'avatar';
             avatar.textContent = isUser ? '👤' : '🗣️';
@@ -130,7 +140,7 @@
             bubble.innerHTML = msg.replace(/\n/g, '<br>');
             div.appendChild(avatar);
             div.appendChild(bubble);
-            if (!isUser) {
+            if (!isUser && !isWakeMsg) {
                 const ctrl = document.createElement('div');
                 ctrl.className = 'message-controls';
                 const btn = document.createElement('button');
@@ -142,6 +152,7 @@
             }
             messagesContainer.appendChild(div);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            return div;
         }
 
         function showTyping() {
@@ -161,7 +172,17 @@
             addMessage(msg, true);
             messageInput.value = '';
             messageInput.focus();
+            
+            // Show waking message if this is first request after load
+            if (!window.jai1WarmedUp) {
+                const wakeDiv = addMessage("🔄 Waking up JAI... This may take 15-30 seconds. Please wait.", false, true);
+                wakeUpMessageId = wakeDiv;
+                window.jai1WarmedUp = true;
+                isWakingUp = true;
+            }
+            
             showTyping();
+            
             try {
                 const res = await fetch(`${API_URL}/api/chat`, {
                     method: 'POST',
@@ -169,13 +190,26 @@
                     body: JSON.stringify({ message: msg, clientId: 'jai2' })
                 });
                 const data = await res.json();
+                
+                // Remove waking message if it exists
+                if (wakeUpMessageId) {
+                    wakeUpMessageId.remove();
+                    wakeUpMessageId = null;
+                }
+                isWakingUp = false;
                 hideTyping();
+                
                 if (data.response) {
                     addMessage(data.response, false);
                 } else {
                     addMessage("I'm here. What's on your mind?", false);
                 }
             } catch(e) {
+                if (wakeUpMessageId) {
+                    wakeUpMessageId.remove();
+                    wakeUpMessageId = null;
+                }
+                isWakingUp = false;
                 hideTyping();
                 addMessage(`❌ Error: ${e.message}`, false);
             }
@@ -183,6 +217,9 @@
 
         sendBtn.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
+        
+        // Pre-warm on page load (optional)
+        fetch(`${API_URL}/health`).catch(e => console.log('Pre-warm failed'));
         
         messageInput.focus();
     </script>
