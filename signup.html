@@ -14,69 +14,142 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(135deg, #0a0f1e 0%, #0a1a2a 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            transition: background 0.3s ease;
         }
 
         .signup-container {
-            max-width: 400px;
+            max-width: 450px;
             width: 100%;
         }
 
+        /* Transparent modal with box shadow */
         .signup-card {
-            background: rgba(15, 25, 45, 0.95);
-            backdrop-filter: blur(10px);
+            background: rgba(15, 25, 45, 0.2);
+            backdrop-filter: blur(12px);
             border-radius: 30px;
-            padding: 40px;
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.05);
             text-align: center;
         }
 
         .logo h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             background: linear-gradient(135deg, #00d4ff, #00ffaa);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
-            margin-bottom: 8px;
+            margin-bottom: 5px;
         }
 
         .logo p {
-            color: #94a3b8;
-            font-size: 0.85rem;
-            margin-bottom: 30px;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.8rem;
+            margin-bottom: 25px;
         }
 
         .input-group {
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             text-align: left;
         }
 
         .input-group label {
             display: block;
-            color: #cbd5e1;
+            color: rgba(255, 255, 255, 0.9);
             font-size: 0.85rem;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .input-group input {
             width: 100%;
-            padding: 14px 18px;
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid rgba(0, 212, 255, 0.3);
+            padding: 12px 16px;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 40px;
             color: white;
-            font-size: 1rem;
+            font-size: 0.95rem;
             outline: none;
             transition: all 0.2s;
         }
 
         .input-group input:focus {
             border-color: #00d4ff;
-            box-shadow: 0 0 10px rgba(0, 212, 255, 0.2);
+            box-shadow: 0 0 10px rgba(0, 212, 255, 0.3);
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        /* Background Selection */
+        .bg-selection {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .bg-selection label {
+            display: block;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            margin-bottom: 10px;
+        }
+
+        .bg-options {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .bg-option {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            cursor: pointer;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.2s;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .bg-option.selected {
+            border-color: #00d4ff;
+            transform: scale(1.05);
+            box-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+        }
+
+        .bg-default { background: linear-gradient(135deg, #0a0f1e, #0a1a2a); }
+        .bg-ocean { background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=200') center/cover; }
+        .bg-forest { background: url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=200') center/cover; }
+        .bg-mountain { background: url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200') center/cover; }
+        .bg-sunset { background: url('https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=200') center/cover; }
+
+        .upload-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .upload-label {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #fff;
+            cursor: pointer;
+            display: inline-block;
+            transition: all 0.2s;
+        }
+
+        .upload-label:hover {
+            background: rgba(255, 255, 255, 0.2);
+            border-color: #00d4ff;
         }
 
         .signup-btn {
@@ -84,7 +157,7 @@
             background: linear-gradient(135deg, #00d4ff, #00aa88);
             border: none;
             border-radius: 40px;
-            padding: 14px;
+            padding: 12px;
             font-weight: bold;
             font-size: 1rem;
             color: #0a0f1e;
@@ -98,9 +171,9 @@
         }
 
         .login-link {
-            margin-top: 20px;
-            color: #94a3b8;
-            font-size: 0.85rem;
+            margin-top: 18px;
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 0.8rem;
         }
 
         .login-link a {
@@ -119,7 +192,7 @@
             padding: 10px;
             text-align: center;
             color: #ff8888;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             margin-bottom: 20px;
             display: none;
         }
@@ -131,7 +204,7 @@
             padding: 10px;
             text-align: center;
             color: #88ff88;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             margin-bottom: 20px;
             display: none;
         }
@@ -139,12 +212,12 @@
         .footer {
             margin-top: 20px;
             font-size: 0.7rem;
-            color: #4a5568;
+            color: rgba(255, 255, 255, 0.5);
             text-align: center;
         }
     </style>
 </head>
-<body>
+<body id="signupBody">
     <div class="signup-container">
         <div class="signup-card">
             <div class="logo">
@@ -170,6 +243,24 @@
                 <input type="password" id="confirmPassword" placeholder="Confirm your password">
             </div>
 
+            <!-- Background Selection -->
+            <div class="bg-selection">
+                <label>🎨 Choose Your Background</label>
+                <div class="bg-options">
+                    <div class="bg-option bg-default" data-bg="default" data-type="default"></div>
+                    <div class="bg-option bg-ocean" data-bg="ocean" data-type="preset"></div>
+                    <div class="bg-option bg-forest" data-bg="forest" data-type="preset"></div>
+                    <div class="bg-option bg-mountain" data-bg="mountain" data-type="preset"></div>
+                    <div class="bg-option bg-sunset" data-bg="sunset" data-type="preset"></div>
+                </div>
+                <div class="upload-option">
+                    <label class="upload-label">📸 Upload Custom Image
+                        <input type="file" id="bgUpload" accept="image/*" style="display: none;">
+                    </label>
+                    <span id="customFileName" style="font-size: 0.7rem; color: rgba(255,255,255,0.6);"></span>
+                </div>
+            </div>
+
             <button class="signup-btn" onclick="signup()">Create Account</button>
 
             <div class="login-link">
@@ -186,6 +277,57 @@
         if (localStorage.getItem('jai_current_user')) {
             window.location.href = 'index.html';
         }
+
+        let selectedBg = 'default';
+        let customBgUrl = null;
+
+        // Background preview on signup page
+        const backgrounds = {
+            default: 'linear-gradient(135deg, #0a0f1e 0%, #0a1a2a 100%)',
+            ocean: 'url("https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1600") center/cover',
+            forest: 'url("https://images.unsplash.com/photo-1441974231531-c6227db76b6e?w=1600") center/cover',
+            mountain: 'url("https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=1600") center/cover',
+            sunset: 'url("https://images.unsplash.com/photo-1495616811223-4d98c6e9c869?w=1600") center/cover'
+        };
+
+        function updateBackgroundPreview() {
+            const body = document.getElementById('signupBody');
+            if (customBgUrl) {
+                body.style.background = `url("${customBgUrl}") center/cover no-repeat fixed`;
+            } else {
+                body.style.background = backgrounds[selectedBg];
+            }
+        }
+
+        // Handle background option clicks
+        document.querySelectorAll('.bg-option').forEach(opt => {
+            opt.addEventListener('click', () => {
+                document.querySelectorAll('.bg-option').forEach(o => o.classList.remove('selected'));
+                opt.classList.add('selected');
+                selectedBg = opt.dataset.bg;
+                customBgUrl = null;
+                document.getElementById('customFileName').textContent = '';
+                updateBackgroundPreview();
+            });
+        });
+
+        // Handle custom image upload
+        document.getElementById('bgUpload').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    customBgUrl = event.target.result;
+                    document.querySelectorAll('.bg-option').forEach(o => o.classList.remove('selected'));
+                    document.getElementById('customFileName').textContent = file.name;
+                    updateBackgroundPreview();
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Select default background
+        document.querySelector('.bg-default').classList.add('selected');
 
         function getUsers() {
             const users = localStorage.getItem('jai_users');
@@ -243,11 +385,14 @@
                 return;
             }
 
-            // Create new user
+            // Save user with background preference
+            const bgPreference = customBgUrl ? { type: 'custom', url: customBgUrl } : { type: selectedBg, url: null };
+            
             users[username] = {
                 password: password,
                 name: username,
-                created: new Date().toISOString()
+                created: new Date().toISOString(),
+                background: bgPreference
             };
             saveUsers(users);
 
