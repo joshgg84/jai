@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-    <title>JAI | Smart Document Assistant</title>
+    <title>JAI | Document Assistant</title>
     <style>
         *{margin:0;padding:0;box-sizing:border-box;}
-        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0a0f1e,#0a1a2a);transition:background 0.3s;}
+        body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;min-height:100vh;background:linear-gradient(135deg,#0a0f1e,#0a1a2a);}
         .container{max-width:1000px;margin:0 auto;padding:20px;min-height:100vh;display:flex;flex-direction:column;}
         .header{text-align:center;padding:20px;background:rgba(10,20,35,0.2);backdrop-filter:blur(12px);border-radius:30px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.1);}
         .header h1{font-size:2rem;background:linear-gradient(135deg,#00d4ff,#00ffaa);-webkit-background-clip:text;background-clip:text;color:transparent;}
         .user-info{display:flex;justify-content:space-between;align-items:center;margin-top:12px;padding-top:10px;border-top:1px solid rgba(255,255,255,0.1);flex-wrap:wrap;gap:10px;}
         .user-name{color:#00d4ff;font-size:0.85rem;}
-        .nav-buttons{display:flex;gap:12px;flex-wrap:wrap;}
-        .journal-btn,.doc-btn{background:rgba(0,212,255,0.2);border:1px solid rgba(0,212,255,0.3);padding:6px 16px;border-radius:30px;font-size:0.7rem;color:#00d4ff;cursor:pointer;text-decoration:none;}
         .logout-btn{background:rgba(255,80,80,0.2);border:1px solid rgba(255,80,80,0.5);padding:6px 16px;border-radius:30px;font-size:0.7rem;color:#ff8888;cursor:pointer;}
         .chat-container{background:rgba(10,20,35,0.2);backdrop-filter:blur(12px);border-radius:24px;border:1px solid rgba(255,255,255,0.1);overflow:hidden;flex:1;display:flex;flex-direction:column;height:55vh;}
         .messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:16px;}
@@ -25,8 +23,8 @@
         .avatar{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0;}
         .message.ai .avatar{background:linear-gradient(135deg,#00d4ff,#00ffaa);}
         .message.user .avatar{background:#2d3748;order:2;}
-        .bubble{max-width:75%;padding:12px 16px;font-size:0.9rem;line-height:1.5;word-wrap:break-word;overflow-wrap:break-word;}
-        .message-controls{display:flex;gap:8px;margin-top:6px;margin-left:48px;flex-wrap:wrap;}
+        .bubble{max-width:75%;padding:12px 16px;font-size:0.9rem;line-height:1.5;word-wrap:break-word;}
+        .message-controls{display:flex;gap:8px;margin-top:6px;margin-left:48px;}
         .speak-btn,.copy-btn{background:rgba(0,212,255,0.2);border:none;border-radius:20px;padding:4px 12px;font-size:0.7rem;color:#00d4ff;cursor:pointer;}
         .input-area{padding:16px;background:rgba(15,25,45,0.3);border-top:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;gap:12px;}
         .input-row{display:flex;gap:12px;}
@@ -34,8 +32,7 @@
         .input-area input:focus{border-color:#00d4ff;}
         .input-area button{background:linear-gradient(135deg,#00d4ff,#00aa88);border:none;border-radius:40px;padding:0 28px;font-weight:bold;cursor:pointer;color:#0a0f1e;}
         .doc-upload-area{display:flex;gap:10px;align-items:center;padding:8px 12px;background:rgba(0,212,255,0.1);border-radius:40px;border:1px dashed rgba(0,212,255,0.3);flex-wrap:wrap;}
-        .doc-upload-label{color:#00d4ff;font-size:0.8rem;cursor:pointer;display:flex;align-items:center;gap:6px;}
-        .doc-upload-label:hover{color:#00ffaa;}
+        .doc-upload-label{color:#00d4ff;font-size:0.8rem;cursor:pointer;}
         .file-info{font-size:0.7rem;color:#888;flex:1;}
         .clear-doc-btn{background:rgba(255,80,80,0.2);border:none;border-radius:20px;padding:4px 12px;font-size:0.7rem;color:#ff8888;cursor:pointer;}
         .active-doc-badge{background:#00aa88;color:#0a0f1e;border-radius:12px;padding:2px 10px;font-size:0.7rem;font-weight:bold;}
@@ -43,7 +40,7 @@
         .messages::-webkit-scrollbar{width:6px;}
         .messages::-webkit-scrollbar-track{background:rgba(0,0,0,0.2);}
         .messages::-webkit-scrollbar-thumb{background:#00d4ff;}
-        @media(max-width:600px){.bubble{max-width:85%;font-size:0.85rem;}.avatar{width:32px;height:32px;}.input-row{flex-direction:column;}}
+        @media(max-width:600px){.bubble{max-width:85%;}.input-row{flex-direction:column;}}
     </style>
 </head>
 <body>
@@ -52,41 +49,34 @@
             <h1>🗣️ JAI</h1>
             <div class="user-info">
                 <span class="user-name">👤 <span id="userName"></span></span>
-                <div class="nav-buttons">
-                    <button class="logout-btn" onclick="logout()">Logout</button>
-                </div>
+                <button class="logout-btn" onclick="logout()">Logout</button>
             </div>
         </div>
         <div class="chat-container">
             <div class="messages" id="messages">
                 <div class="message ai">
                     <div class="avatar">🗣️</div>
-                    <div class="bubble">Hey <span id="welcomeName"></span>! 📄 Upload a document (PDF, DOCX, TXT) and I'll simplify it for you. Then you can ask questions naturally!</div>
+                    <div class="bubble">Hey <span id="welcomeName"></span>! 📄 Upload a document and I'll help you understand it.</div>
                 </div>
             </div>
             <div class="input-area">
-                <div class="doc-upload-area" id="docUploadArea">
-                    <label class="doc-upload-label" onclick="document.getElementById('fileInput').click()">
-                        📄 Upload Document
-                    </label>
+                <div class="doc-upload-area">
+                    <label class="doc-upload-label" onclick="document.getElementById('fileInput').click()">📄 Upload Document</label>
                     <input type="file" id="fileInput" accept=".pdf,.docx,.txt" style="display:none" onchange="handleFileUpload(this)">
                     <span id="fileInfo" class="file-info">No document loaded</span>
-                    <button class="clear-doc-btn" onclick="clearDocument()" style="display:none" id="clearDocBtn">Clear</button>
+                    <button class="clear-doc-btn" onclick="clearDocument()" id="clearDocBtn" style="display:none">Clear</button>
                     <span id="activeDocBadge" class="active-doc-badge" style="display:none"></span>
                 </div>
                 <div class="input-row">
-                    <input type="text" id="messageInput" placeholder="Ask about your document or type a message..." autocomplete="off">
+                    <input type="text" id="messageInput" placeholder="Ask about your document..." autocomplete="off">
                     <button id="sendBtn">Send</button>
                 </div>
             </div>
         </div>
-        <div class="footer">
-            🔊 Click Listen to hear JAI speak | 📄 Upload any document | 💬 Ask questions naturally
-        </div>
+        <div class="footer">🔊 Click Listen | 📄 Upload PDF/DOCX/TXT | 💬 Ask questions</div>
     </div>
 
     <script>
-        // Auth check
         const currentUser = localStorage.getItem('jai_current_user');
         if (!currentUser) window.location.href = 'login.html';
         
@@ -100,41 +90,29 @@
             window.location.href = 'login.html';
         }
 
-        // Configuration
         const API_URL = 'https://jai1-sh81.onrender.com';
         let currentDocId = null;
         let currentDocName = null;
         let currentAudio = null;
 
-        // Convert file to base64
         function fileToBase64(file) {
             return new Promise((resolve, reject) => {
                 const reader = new FileReader();
                 reader.readAsDataURL(file);
-                reader.onload = () => {
-                    const base64 = reader.result.split(',')[1];
-                    resolve(base64);
-                };
+                reader.onload = () => resolve(reader.result.split(',')[1]);
                 reader.onerror = error => reject(error);
             });
         }
 
-        // Handle file upload
         async function handleFileUpload(input) {
             const file = input.files[0];
             if (!file) return;
-            
-            if (file.size > 10 * 1024 * 1024) {
-                addMessage("❌ File too large. Maximum size is 10MB.", false);
-                return;
-            }
             
             addMessage(`📄 Uploading "${file.name}"...`, false);
             showTyping();
             
             try {
                 const base64 = await fileToBase64(file);
-                
                 const response = await fetch(`${API_URL}/api/chat`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -151,62 +129,48 @@
                     addMessage(data.response, false);
                     
                     // Extract document ID from response
-                    const docIdMatch = data.response.match(/ID:\s*`([^`]+)`/);
-                    if (docIdMatch) {
-                        currentDocId = docIdMatch[1];
+                    const match = data.response.match(/ID:\s*`([^`]+)`/);
+                    if (match) {
+                        currentDocId = match[1];
                         currentDocName = file.name;
                         document.getElementById('fileInfo').innerHTML = `✅ ${file.name.substring(0, 30)}`;
                         document.getElementById('clearDocBtn').style.display = 'inline-block';
                         document.getElementById('activeDocBadge').style.display = 'inline-block';
                         document.getElementById('activeDocBadge').innerHTML = `📄 Active: ${file.name.substring(0, 20)}`;
-                        addMessage(`💡 **Document ready!** You can now ask me anything about "${file.name}". Just type your question naturally!`, false);
+                        console.log(`Document loaded with ID: ${currentDocId}`);
                     }
-                } else {
-                    addMessage("❌ Failed to upload document. Please try again.", false);
                 }
             } catch(e) {
                 hideTyping();
-                addMessage(`❌ Upload error: ${e.message}`, false);
+                addMessage(`❌ Error: ${e.message}`, false);
             }
-            
             input.value = '';
         }
 
-        // Clear current document
         function clearDocument() {
             currentDocId = null;
             currentDocName = null;
             document.getElementById('fileInfo').innerHTML = 'No document loaded';
             document.getElementById('clearDocBtn').style.display = 'none';
             document.getElementById('activeDocBadge').style.display = 'none';
-            addMessage("🗑️ Document cleared. You can upload a new one anytime.", false);
+            addMessage("🗑️ Document cleared.", false);
         }
 
-        // Text to speech
-        async function speakText(text) {
+        function speakText(text) {
             if (!text) return;
             if (currentAudio) { currentAudio.pause(); currentAudio = null; }
-            
-            const cleanText = text.replace(/[📄🔍🌤️💰🧮✅❌📚⚖️💡]/g, '').replace(/\*\*/g, '');
-            
-            try {
-                const utterance = new SpeechSynthesisUtterance(cleanText);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.9;
-                utterance.pitch = 1;
-                window.speechSynthesis.speak(utterance);
-            } catch(e) {
-                console.log('Speech error:', e);
-            }
+            const cleanText = text.replace(/[📄🔍🌤️💰🧮✅❌📚⚖️💡]/g, '');
+            const utterance = new SpeechSynthesisUtterance(cleanText);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            window.speechSynthesis.speak(utterance);
         }
 
-        // Copy to clipboard
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text);
-            addMessage("📋 Copied to clipboard!", false);
+            addMessage("📋 Copied!", false);
         }
 
-        // Add message to chat
         function addMessage(msg, isUser = false) {
             const div = document.createElement('div');
             div.className = `message ${isUser ? 'user' : 'ai'}`;
@@ -240,12 +204,11 @@
             return div;
         }
 
-        // Typing indicator
         function showTyping() {
             const d = document.createElement('div');
             d.className = 'message ai';
             d.id = 'typingIndicator';
-            d.innerHTML = '<div class="avatar">🗣️</div><div class="bubble">JAI is thinking...</div>';
+            d.innerHTML = '<div class="avatar">🗣️</div><div class="bubble">Thinking...</div>';
             messagesContainer.appendChild(d);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
@@ -255,21 +218,20 @@
             if (t) t.remove(); 
         }
 
-        // Send message
         async function sendMessage() {
             let msg = messageInput.value.trim();
             if (!msg) return;
             
-            // Show user message
             addMessage(msg, true);
             messageInput.value = '';
             messageInput.focus();
             
-            // Auto-add ask_doc prefix if we have an active document
+            // CRITICAL: Auto-add ask_doc prefix if document is active
             let finalMessage = msg;
-            if (currentDocId && !msg.startsWith('upload_doc') && !msg.startsWith('ask_doc') && !msg.startsWith('teach') && !msg.startsWith('next time')) {
+            if (currentDocId) {
                 finalMessage = `ask_doc:${currentDocId}:${msg}`;
-                console.log(`Auto-prefixed with document ID: ${currentDocId}`);
+                console.log(`📄 Sending with document ID: ${currentDocId}`);
+                console.log(`📝 Full message: ${finalMessage}`);
             }
             
             showTyping();
@@ -283,34 +245,23 @@
                 
                 const data = await response.json();
                 hideTyping();
-                
-                if (data.response) {
-                    addMessage(data.response, false);
-                } else {
-                    addMessage("I'm here. What's on your mind?", false);
-                }
+                addMessage(data.response || "I'm here. What's on your mind?", false);
             } catch(e) {
                 hideTyping();
                 addMessage(`❌ Error: ${e.message}`, false);
             }
         }
 
-        // DOM elements
         const messagesContainer = document.getElementById('messages');
         const messageInput = document.getElementById('messageInput');
         const sendBtn = document.getElementById('sendBtn');
 
-        // Event listeners
         sendBtn.addEventListener('click', sendMessage);
         messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') sendMessage(); });
         
-        // Focus input
         messageInput.focus();
         
-        // Keep-alive
-        setInterval(() => {
-            fetch(`${API_URL}/health`).catch(e => console.log('Ping failed'));
-        }, 10 * 60 * 1000);
+        setInterval(() => fetch(`${API_URL}/health`).catch(e => console.log('Ping failed')), 10 * 60 * 1000);
     </script>
 </body>
 </html>
